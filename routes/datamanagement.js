@@ -1,5 +1,5 @@
 const express = require('express');
-const { HubsApi, ProjectsApi, FoldersApi, ItemsApi } = require('forge-apis');
+const { HubsApi, ProjectsApi, FoldersApi, ItemsApi,DerivativesApi } = require('forge-apis');
 
 const { OAuth } = require('./common/oauth');
 
@@ -22,8 +22,17 @@ router.get('/datamanagement', async (req, res) => {
     } else {
         // Otherwise let's break it by '/'
         const params = href.split('/');
-        const resourceName = params[params.length - 2];
-        const resourceId = params[params.length - 1];
+
+        let resourceName = ''
+        let resourceId = ''
+        if(params.length>1){
+            resourceName = params[params.length - 2];
+            resourceId = params[params.length - 1];
+        }else{
+            resourceId = params[params.length - 1];
+            resourceName = 'views'
+        } 
+ 
         switch (resourceName) {
             case 'hubs':
                 getProjects(resourceId, oauth.getClient(), internalToken, res);
@@ -43,6 +52,11 @@ router.get('/datamanagement', async (req, res) => {
                 {
                     const projectId = params[params.length - 3];
                     getVersions(projectId, resourceId/*item_id*/, oauth.getClient(), internalToken, res);
+                    break;
+                }
+            case 'views':
+                {
+                    getVersionViews(resourceId,/*urn_id*/ oauth.getClient(), internalToken, res);
                     break;
                 }
         }
@@ -139,8 +153,27 @@ async function getVersions(projectId, itemId, oauthClient, credentials, res) {
             viewerUrn,
             decodeURI('v' + versionst + ': ' + dateFormated + ' by ' + version.attributes.lastModifiedUserName),
             (viewerUrn != null ? 'versions' : 'unsupported'),
+            true
+        );
+    }));
+}
+
+async function getVersionViews(urn, oauthClient, credentials, res) {
+
+    const derivativesApi = new DerivativesApi();
+
+    const views = await derivativesApi.getMetadata(urn,{},
+                                    oauthClient, credentials);
+
+    res.json(views.body.data.metadata.map((view) => {
+        if(view.role == '3d'){
+        return createTreeNode(
+            urn +'|' + view.guid,
+            view.name,
+            'views',
             false
         );
+        }
     }));
 }
 
