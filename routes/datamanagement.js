@@ -163,18 +163,17 @@ async function getVersionViews(urn, oauthClient, credentials, res) {
     const derivativesApi = new DerivativesApi();
 
     const views = await derivativesApi.getMetadata(urn,{},
-                                    oauthClient, credentials);
+                                    oauthClient, credentials); 
 
     res.json(views.body.data.metadata.map((view) => {
-        if(view.role == '3d'){
-        return createTreeNode(
+         return createTreeNode(
             urn +'|' + view.guid,
             view.name,
             'views',
             false
         );
-        }
-    }));
+       
+    })); 
 }
 
 // Format data for tree
