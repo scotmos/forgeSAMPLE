@@ -65,7 +65,7 @@ function prepareUserHubsTree() {
       'items': { 'icon': 'glyphicon glyphicon-file' },
       'bim360documents': { 'icon': 'glyphicon glyphicon-file' },
       'versions': { 'icon': 'glyphicon glyphicon-time' },
-      'views': { 'icon': 'glyphicon glyphicon-open' },
+      'views': { 'icon': 'glyphicon glyphicon-file' },
 
       'unsupported': { 'icon': 'glyphicon glyphicon-ban-circle' }
     },
@@ -100,9 +100,9 @@ function prepareUserHubsTree() {
           launchViewer(urn, viewableId);
         }
       }
-      else {
-        launchViewer(data.node.id);
-      }
+    } 
+    else {
+      launchViewer(data.node.id);
     }
   });
 }

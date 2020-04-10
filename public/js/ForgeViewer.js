@@ -26,7 +26,8 @@ function launchViewer(urn, viewableId, multiple) {
   }
 
   function onDocumentLoadSuccess(doc) {
-    var viewables = (viewableId ? doc.getRoot().findByGuid(viewableId) : doc.getRoot().getDefaultGeometry());
+    //note, with guid of metadata, we need to use its parent(which is viewerable)
+    var viewables = (viewableId ? doc.getRoot().findByGuid(viewableId).parent : doc.getRoot().getDefaultGeometry());
     viewer.loadDocumentNode(doc, viewables, { keepCurrentModels: multiple }).then(i => {
       // any additional action here?
     });
